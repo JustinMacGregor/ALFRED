@@ -17,7 +17,7 @@ pip install -r requirements.txt
 Run the `PyBot.py` script:
 Copy code
 ```python
-python `PyBot.py`
+python PyBot.py
 ```
 ## Usage
 1. Start the PyBot program by running the `PyBot.py` script.
