@@ -36,7 +36,7 @@ device_combobox.pack()
 # function to populate the list box with existing automations
 def populate_automation_list():
     automation_list.delete(0, tk.END)  # clear the list box
-    automation_folder = os.path.join(os.pardir, "automations")
+    automation_folder = os.path.join(os.getcwd(), "automations")
     automations = os.listdir(automation_folder)
     for automation in automations:
         if automation.endswith(".py"):
@@ -53,7 +53,7 @@ def delete_automation():
     if selection:
         automation = automation_list.get(selection[0])
         if messagebox.askyesno("Delete Automation", f"Are you sure you want to delete {automation}?"):
-            automation_path = os.path.join(os.pardir, "automations", automation)
+            automation_path = os.path.join(os.getcwd(), "automations", automation)
             os.remove(automation_path)
             populate_automation_list()
 
@@ -71,7 +71,7 @@ def add_automation():
         phrase = simpledialog.askstring("Add Automation", "Enter the phrase to trigger this automation:")
         if phrase:
             # create the automation file in the automations folder
-            automation_folder = os.path.join(os.pardir, "automations")
+            automation_folder = os.path.join(os.getcwd(), "automations")
             automation_name = os.path.basename(file_path)
             new_automation_path = os.path.join(automation_folder, automation_name)
             with open(file_path, "r") as f:
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     # command before execution of this python file
     clear()
 
-    automation_folder = os.path.join(os.pardir, "automations")
+    automation_folder = os.path.join(os.getcwd(), "automations")
 
     # Check if the "automations" folder exists, create it if it doesn't
     if not os.path.exists(automation_folder):
@@ -137,7 +137,7 @@ if __name__ == '__main__':
             query = takeCommand().lower()
 
             # check if query matches any trigger phrase for an automation
-            automation_folder = os.path.join(os.pardir, "automations")
+            automation_folder = os.path.join(os.getcwd(), "automations")
             automations = os.listdir(automation_folder)
             for automation in automations:
                 if automation.endswith(".py"):
