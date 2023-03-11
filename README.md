@@ -1,6 +1,12 @@
 # PyBot
 PyBot is a Python-based automation tool that allows users to run pre-written Python scripts using voice commands. The tool is designed to recognize trigger phrases and run the corresponding automation script. PyBot also provides a graphical user interface (GUI) for managing the list of available automations, adding new automations, and deleting existing ones.
 
+<p align="center">
+  <img src="https://camo.githubusercontent.com/c8ea1110aab43014bb8d5f86c84f82881f9847f2ea92a6ca6c7e511d06d7339c/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3733353030382f313834353232392f37373338666530612d373537392d313165332d383466342d3762313261613462323939622e706e67" alt="image" height="300" />
+</p>
+
+
+
 ## Requirements
 - Python 3.7 or higher
 - `pyttsx3` library
