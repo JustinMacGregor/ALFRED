@@ -17,7 +17,7 @@ pip install -r requirements.txt
 Run the `PyBot.py` script:
 Copy code
 ```python
-python `PyBot.py`
+python PyBot.py
 ```
 ## Usage
 1. Start the PyBot program by running the `PyBot.py` script.
@@ -28,8 +28,9 @@ python `PyBot.py`
 ## Example Automations
 PyBot comes with two example automations:
 
-`lock_device.py`: locks the Windows device.
-`open_browser.py`: opens the default browser.
+- `lock_device.py`: locks the Windows device.
+- `open_browser.py`: opens the default browser.
+
 To add these automations to PyBot:
 
 Copy the automations folder from the PyBot source code to your project folder.
