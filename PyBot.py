@@ -99,33 +99,41 @@ def speak(audio):
 def UseMicrophone():
     r = sr.Recognizer()
 
-    def recognize(q):
+    def recognize(q, trigger_words, automations):
         with sr.Microphone(device_index=device_combobox.current()) as source:
+            r.adjust_for_ambient_noise(source)
             print("Listening...")
-            r.pause_threshold = 1
-            audio = r.listen(source)
+            while True:
+                audio = r.listen(source)
+                try:
+                    result = r.recognize_google(audio)
+                    print("Recognizing...")
+                    print("result2:")
+                    print(result)
+                    if any(word in result.lower() for word in trigger_words):
+                        # Find the automation that matches the trigger word(s)
+                        for automation in automations["automations"]:
+                            if all(word in result.lower() for word in automation["trigger_words"]):
+                                # Execute the automation's Python file
+                                os.system(f'python {automation["py_file_path"]}')
+                                speak("Task completed!")
+                                break
+                    else:
+                        speak("Unable to recognize your voice. Please try again.")
+                except sr.UnknownValueError:
+                    continue
+                except sr.RequestError:
+                    speak("Sorry, I could not process your request at the moment. Please try again later.")
+                q.put(audio)
 
-        try:
-            print("Recognizing...")
-            query = r.recognize_google(audio, language='en-in')
-            print(f"User said: {query}\n")
-            speak(query)
-            q.put(query)
-
-        except Exception as e:
-            print(e)
-            print("Unable to Recognize your voice.")
-            speak("Unable to Recognize your voice.")
-            q.put(None)
+    def start_recognizer():
+        with open("automations.json") as f:
+            automations = json.load(f)
+        trigger_words = []
+        threading.Thread(target=recognize, args=(q, trigger_words, automations)).start()
 
     q = queue.Queue()
-    threading.Thread(target=recognize, args=(q,)).start()
-    query = q.get()
-    if query is not None:
-        window.after(100, lambda: speak(query))
-        return query.lower()
-    else:
-        return ""
+    window.after(100, start_recognizer)
 
 
 
