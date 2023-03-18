@@ -1,4 +1,4 @@
-# PyBot
+# ALFRED - Automated Language Functionality and Recognition Enabled Device
 PyBot is a Python-based automation tool that allows users to run pre-written Python scripts using voice commands. The tool is designed to recognize trigger phrases and run the corresponding automation script. PyBot also provides a graphical user interface (GUI) for managing the list of available automations, adding new automations, and deleting existing ones.
 
 <p align="center">
