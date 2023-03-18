@@ -1,8 +1,10 @@
 import json
 import os
+import queue
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
+
 
 import pyttsx3
 import sounddevice as sd
@@ -97,23 +99,35 @@ def speak(audio):
 def UseMicrophone():
     r = sr.Recognizer()
 
-    with sr.Microphone(device_index=device_combobox.current()) as source:
+    def recognize(q):
+        with sr.Microphone(device_index=device_combobox.current()) as source:
+            print("Listening...")
+            r.pause_threshold = 1
+            audio = r.listen(source)
 
-        print("Listening...")
-        r.pause_threshold = 1
-        audio = r.listen(source)
+        try:
+            print("Recognizing...")
+            query = r.recognize_google(audio, language='en-in')
+            print(f"User said: {query}\n")
+            speak(query)
+            q.put(query)
 
-    try:
-        print("Recognizing...")
-        query = r.recognize_google(audio, language='en-in')
-        print(f"User said: {query}\n")
+        except Exception as e:
+            print(e)
+            print("Unable to Recognize your voice.")
+            speak("Unable to Recognize your voice.")
+            q.put(None)
 
-    except Exception as e:
-        print(e)
-        print("Unable to Recognize your voice.")
-        return "None"
+    q = queue.Queue()
+    threading.Thread(target=recognize, args=(q,)).start()
+    query = q.get()
+    if query is not None:
+        window.after(100, lambda: speak(query))
+        return query.lower()
+    else:
+        return ""
 
-    return query
+
 
 
 if __name__ == '__main__':
@@ -133,7 +147,7 @@ if __name__ == '__main__':
     def take_command():
         while True:
             query = UseMicrophone().lower()
-            if query != "None":
+            if query:
                 with open("automations.json") as f:
                     automations = json.load(f)
                     for automation in automations["automations"]:
