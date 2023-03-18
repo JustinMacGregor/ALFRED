@@ -130,7 +130,12 @@ def UseMicrophone():
         with open("automations.json") as f:
             automations = json.load(f)
         trigger_words = []
-        threading.Thread(target=recognize, args=(q, trigger_words, automations)).start()
+        for automation in automations["automations"]:
+            trigger_words.extend(automation["trigger_words"])
+
+        q = queue.Queue()
+        t = threading.Thread(target=recognize, args=(q, trigger_words, automations))
+        t.start()
 
     q = queue.Queue()
     window.after(100, start_recognizer)
