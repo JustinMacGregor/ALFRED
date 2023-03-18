@@ -5,7 +5,6 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
-
 import pyttsx3
 import sounddevice as sd
 import speech_recognition as sr
@@ -63,7 +62,6 @@ def delete_automation():
                 with open("automations.json", "w") as f:
                     json.dump(automations, f, indent=4)
                 populate_automation_list()
-
 
 
 # create a button to delete selected automation
@@ -137,14 +135,11 @@ def UseMicrophone():
         for automation in automations["automations"]:
             trigger_words.extend(automation["trigger_words"])
 
-        q = queue.Queue()
-        t = threading.Thread(target=recognize, args=(q, trigger_words, automations))
+        qu = queue.Queue()
+        t = threading.Thread(target=recognize, args=(qu, trigger_words, automations))
         t.start()
 
-    q = queue.Queue()
     window.after(100, start_recognizer)
-
-
 
 
 if __name__ == '__main__':

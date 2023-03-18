@@ -1,12 +1,12 @@
 {
     "automations": [
         {
-            "title": "lock computer",
-            "description": "locks computer",
+            "title": "Open Browser",
+            "description": "Opens Browser",
             "trigger_words": [
-                "pineapple"
+                "browser"
             ],
-            "py_file_path": "C:/Users/justi/Desktop/PyBot/PyBot/automations/lock_device.py"
+            "py_file_path": "C:/Users/justi/Desktop/PyBot/PyBot/automations/open_browser.py"
         }
     ]
 }
