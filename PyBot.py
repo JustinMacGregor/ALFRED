@@ -1,6 +1,7 @@
 import json
 import os
 import queue
+import time
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
@@ -107,22 +108,28 @@ def UseMicrophone():
         with sr.Microphone(device_index=device_combobox.current()) as source:
             r.adjust_for_ambient_noise(source)
             print("Listening...")
+            timeout_duration = 5  # wait for a maximum of 5 seconds for the next command
+            last_command_time = 0  # keep track of the time of the last command
             while True:
-                # listen for 5 seconds
-                audio = r.listen(source, timeout=5)
+                # listen for the duration of the timeout
+                audio = r.listen(source, timeout=timeout_duration)
                 try:
                     result = r.recognize_google(audio)
                     print("Recognizing...")
                     print("result2:")
                     print(result)
                     if any(word in result.lower() for word in trigger_words):
-                        # Find the automation that matches the trigger word(s)
-                        for automation in automations["automations"]:
-                            if all(word in result.lower() for word in automation["trigger_words"]):
-                                # Execute the automation's Python file
-                                os.system(f'python {automation["py_file_path"]}')
-                                speak("Task completed!")
-                                break
+                        # only execute the automation if there has been sufficient time since the last command
+                        current_time = time.time()
+                        if current_time - last_command_time >= timeout_duration:
+                            # Find the automation that matches the trigger word(s)
+                            for automation in automations["automations"]:
+                                if all(word in result.lower() for word in automation["trigger_words"]):
+                                    # Execute the automation's Python file
+                                    os.system(f'python {automation["py_file_path"]}')
+                                    speak("Task completed!")
+                                    last_command_time = current_time
+                                    break
                 except sr.UnknownValueError:
                     continue
                 except sr.RequestError:
