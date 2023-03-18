@@ -118,8 +118,6 @@ def UseMicrophone():
                                 os.system(f'python {automation["py_file_path"]}')
                                 speak("Task completed!")
                                 break
-                    else:
-                        speak("Unable to recognize your voice. Please try again.")
                 except sr.UnknownValueError:
                     continue
                 except sr.RequestError:
