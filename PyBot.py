@@ -133,15 +133,14 @@ if __name__ == '__main__':
     def take_command():
         while True:
             query = UseMicrophone().lower()
-
-            # check if query matches any trigger phrase for an automation
-            with open("automations.json") as f:
-                automations = json.load(f)
-                for automation in automations:
-                    if isinstance(automation, dict) and any(word in query for word in automation["trigger_words"]):
-                        speak(f"Running {automation['title']}")
-                        os.system(f"python {automation['path']}")
-                        break
+            if query != "None":
+                with open("automations.json") as f:
+                    automations = json.load(f)
+                    for automation in automations["automations"]:
+                        if any(word in query for word in automation["trigger_words"]):
+                            speak(f"Running {automation['title']}")
+                            os.system(f"python {automation['py_file_path']}")
+                            break
 
 
     def main_loop():
