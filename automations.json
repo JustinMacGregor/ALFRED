@@ -1,0 +1,12 @@
+{
+    "automations": [
+        {
+            "title": "lock computer",
+            "description": "locks computer",
+            "trigger_words": [
+                "pineapple"
+            ],
+            "py_file_path": "C:/Users/justi/Desktop/PyBot/PyBot/automations/lock_device.py"
+        }
+    ]
+}

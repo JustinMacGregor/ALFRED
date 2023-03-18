@@ -1,10 +1,11 @@
-import ctypes
+import json
 import os
-import sounddevice as sd
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
+
 import pyttsx3
+import sounddevice as sd
 import speech_recognition as sr
 
 engine = pyttsx3.init('sapi5')
@@ -36,11 +37,10 @@ device_combobox.pack()
 # function to populate the list box with existing automations
 def populate_automation_list():
     automation_list.delete(0, tk.END)  # clear the list box
-    automation_folder = os.path.join(os.getcwd(), "automations")
-    automations = os.listdir(automation_folder)
-    for automation in automations:
-        if automation.endswith(".py"):
-            automation_list.insert(tk.END, automation)
+    with open("automations.json") as f:
+        automations = json.load(f)
+        for automation in automations["automations"]:
+            automation_list.insert(tk.END, automation["title"])
 
 
 # call the function to populate the list box initially
@@ -67,23 +67,21 @@ def add_automation():
     # open a file dialog to select the automation file
     file_path = filedialog.askopenfilename(filetypes=[("Python Files", "*.py")])
     if file_path:
-        # ask for the trigger phrase
-        phrase = simpledialog.askstring("Add Automation", "Enter the phrase to trigger this automation:")
-        if phrase:
-            # create the automation file in the automations folder
-            automation_folder = os.path.join(os.getcwd(), "automations")
-            automation_name = os.path.basename(file_path)
-            new_automation_path = os.path.join(automation_folder, automation_name)
-            with open(file_path, "r") as f:
-                content = f.read()
-                print(content)
-            with open(new_automation_path, "w") as f:
-                words = phrase.lower().split(",")
-                words_str = ', '.join(f'"{word}"' for word in words)
-                f.write(f'keywords = [{words_str}]\n\n')
-                f.write(f'{content}\n')
-
-            populate_automation_list()
+        # ask for the automation metadata
+        title = simpledialog.askstring("Add Automation", "Enter the title of the automation:")
+        description = simpledialog.askstring("Add Automation", "Enter a description of the automation:")
+        trigger_words = simpledialog.askstring("Add Automation",
+                                               "Enter the trigger words for the automation (comma-separated):")
+        trigger_words = [word.strip() for word in trigger_words.split(",")]
+        # add the new automation to the JSON file
+        with open("automations.json") as f:
+            automations = json.load(f)
+        new_automation = {"title": title, "description": description, "trigger_words": trigger_words,
+                          "py_file_path": file_path}
+        automations["automations"].append(new_automation)
+        with open("automations.json", "w") as f:
+            json.dump(automations, f, indent=4)
+        populate_automation_list()
 
 
 # create a button to add a new automation
@@ -96,7 +94,7 @@ def speak(audio):
     engine.runAndWait()
 
 
-def takeCommand():
+def UseMicrophone():
     r = sr.Recognizer()
 
     with sr.Microphone(device_index=device_combobox.current()) as source:
@@ -134,29 +132,22 @@ if __name__ == '__main__':
 
     def take_command():
         while True:
-            query = takeCommand().lower()
+            query = UseMicrophone().lower()
 
             # check if query matches any trigger phrase for an automation
-            automation_folder = os.path.join(os.getcwd(), "automations")
-            automations = os.listdir(automation_folder)
-            for automation in automations:
-                if automation.endswith(".py"):
-                    automation_path = os.path.join(automation_folder, automation)
-                    with open(automation_path, "r") as f:
-                        content = f.read()
-                    if f'"{query.lower()}"' in content:
-                        speak(f"Running {automation}")
-                        os.system(f"python {automation_path}")
+            with open("automations.json") as f:
+                automations = json.load(f)
+                for automation in automations:
+                    if isinstance(automation, dict) and any(word in query for word in automation["trigger_words"]):
+                        speak(f"Running {automation['title']}")
+                        os.system(f"python {automation['path']}")
                         break
 
-            # example2
-            if 'lock' in query:
-                speak("locking the device")
-                ctypes.windll.user32.LockWorkStation()
 
     def main_loop():
         window.update()
         window.after(100, main_loop)
+
 
     # Start the threads
     threading.Thread(target=take_command).start()
