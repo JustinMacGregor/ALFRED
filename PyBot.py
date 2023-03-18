@@ -108,7 +108,8 @@ def UseMicrophone():
             r.adjust_for_ambient_noise(source)
             print("Listening...")
             while True:
-                audio = r.listen(source)
+                # listen for 5 seconds
+                audio = r.listen(source, timeout=5)
                 try:
                     result = r.recognize_google(audio)
                     print("Recognizing...")
@@ -126,7 +127,10 @@ def UseMicrophone():
                     continue
                 except sr.RequestError:
                     speak("Sorry, I could not process your request at the moment. Please try again later.")
-                q.put(audio)
+
+                # exit the loop after 5 seconds
+                if not q.empty():
+                    break
 
     def start_recognizer():
         with open("automations.json") as f:
