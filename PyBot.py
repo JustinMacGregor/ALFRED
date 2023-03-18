@@ -53,11 +53,17 @@ populate_automation_list()
 def delete_automation():
     selection = automation_list.curselection()
     if selection:
-        automation = automation_list.get(selection[0])
-        if messagebox.askyesno("Delete Automation", f"Are you sure you want to delete {automation}?"):
-            automation_path = os.path.join(os.getcwd(), "automations", automation)
-            os.remove(automation_path)
-            populate_automation_list()
+        automation_index = selection[0]
+        with open("automations.json") as f:
+            automations = json.load(f)
+            automation = automations["automations"][automation_index]
+            if messagebox.askyesno("Delete Automation", f"Are you sure you want to delete {automation['title']}?"):
+                os.remove(automation["py_file_path"])
+                automations["automations"].pop(automation_index)
+                with open("automations.json", "w") as f:
+                    json.dump(automations, f, indent=4)
+                populate_automation_list()
+
 
 
 # create a button to delete selected automation
