@@ -1,11 +1,10 @@
 # ALFRED - Automated Language Functionality and Recognition Enabled Device
-Alfred is a Python-based automation tool that allows users to run pre-written Python scripts using voice commands. The tool is designed to recognize trigger phrases and run the corresponding automation script. Alfred also provides a graphical user interface (GUI) for managing the list of available automations, adding new automations, and deleting existing ones.
 
 <p align="center">
   <img src="https://justinmacgregor.me/assets/images/image03.png?v=612af41b" alt="image" height="300" />
 </p>
 
-
+Alfred is a Python-based automation tool that allows users to run pre-written Python scripts using voice commands. The tool is designed to recognize trigger phrases and run the corresponding automation script. Alfred also provides a graphical user interface (GUI) for managing the list of available automations, adding new automations, and deleting existing ones.
 
 ## Requirements
 - Python 3.7 or higher
